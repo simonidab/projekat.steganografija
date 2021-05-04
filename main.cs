@@ -5,7 +5,7 @@ class MainClass {
   //file header, 14 bajtova
   struct BMFH
   {
-    public int bfTip;  //tip slike, u ovom slucaju uvek BM
+    public short bfTip;  //tip slike, u ovom slucaju uvek BM
     public int bfVelicina;  //velicina fajla u bajtovima
     public short bfRezervisano1; //uvek 0
     public short bfRezervisano2; //uvek 0
@@ -34,22 +34,26 @@ class MainClass {
     public int crvena;
   }
   
-  /*static int CharUBinarno(char a)
+  static byte Obrnuti(int n)
   {
-    return
-  }*/
+        int obrnuti = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            obrnuti = obrnuti * 2 + n % 2;
+            n /= 2;
+        }
+        return Convert.ToByte(obrnuti);
+  }
   public static void Main (string[] args) {
-    string imeUlaza = "slika2.bmp";
-    string imeIzlaza = "izlaz2.bmp";
+    string imeUlaza = "SlikaZaProveru.bmp";
+    string imeIzlaza = "IzlazZaProveru.bmp";
     if (File.Exists(imeUlaza))
     {
         FileStream fs = File.Open(imeUlaza, FileMode.Open);
         BinaryReader ulaz  = new BinaryReader(fs);
         FileStream fs1 = File.Open(imeIzlaza, FileMode.Create);
         BinaryWriter izlaz = new BinaryWriter(fs1);
-        //unos teksta
-        Console.WriteLine("Unesite text koji zelite da sakrijete u slici: ");
-        string tekst = Console.ReadLine();
+
 
         BMFH FileHeader;      //unos file headera i prenos u novu sliku
         //for (int i = 0; i < fs.Length / sizeof(int); i++)
@@ -90,49 +94,95 @@ class MainClass {
     
         int velicina = InfoHeader.biSirina*InfoHeader.biVisina*3;
 
-        Console.WriteLine("Slika je {0}-bitna.",InfoHeader.biBitCount);
         Pixel pixel;
-        //int KojaJeBoja=0;
-
-        for (int i=0;i<tekst.Length;i++)
+        Console.WriteLine("Ako zelite da sakrijete poruku u slici napisite 1, a ako zelite da procitate poruku iz slike unesite 2");
+        int KojaFunkcija = Convert.ToInt32(Console.ReadLine());
+        if (KojaFunkcija==1)
         {
-          short karakter = (short)(tekst[i]); 
-          for (int j=0;j<4;j++)
+          int brojac = 0;
+          //unos teksta
+          Console.WriteLine("Unesite text koji zelite da sakrijete u slici: ");
+          string tekst = Console.ReadLine();
+          for (int i=0;i<tekst.Length;i++)
           {
-            pixel.plava = ulaz.ReadByte();
-            pixel.zelena = ulaz.ReadByte();
-            pixel.crvena = ulaz.ReadByte();
-            /*Console.WriteLine(ulaz.ReadByte());
-            Console.WriteLine(pixel.plava);*/
-            pixel.plava-=pixel.plava%2;
-            pixel.zelena-=pixel.zelena%2;
-            pixel.crvena-=pixel.crvena%2;
-          //Console.WriteLine(pixel.plava);
-            pixel.plava+=karakter%2;
-            izlaz.Write(pixel.plava);
-            karakter/=2;
-            if (j!=3)
+            short karakter = (short)(tekst[i]); 
+            for (int j=0;j<6;j++)
             {
-              pixel.zelena+=karakter%2;
+              pixel.plava = ulaz.ReadByte();
+              pixel.zelena = ulaz.ReadByte();
+              pixel.crvena = ulaz.ReadByte();
+
+              pixel.plava=Obrnuti(pixel.plava);
+              pixel.zelena=Obrnuti(pixel.zelena);
+              pixel.crvena=Obrnuti(pixel.crvena);
+
+              pixel.plava-=pixel.plava%2;
+              pixel.zelena-=pixel.zelena%2;
+              pixel.crvena-=pixel.crvena%2;
+
+              pixel.plava+=karakter%2;
+              //pixel.plava=Obrnuti(pixel.plava);
+              izlaz.Write(Convert.ToByte(pixel.plava));
               karakter/=2;
-              pixel.crvena+=karakter%2;
-              karakter/=2;
+              if (j!=5)
+              {
+                pixel.zelena+=karakter%2;
+                karakter/=2;
+                pixel.crvena+=karakter%2;
+                karakter/=2;
+              }
+              //pixel.zelena=Obrnuti(pixel.zelena);
+             // pixel.crvena=Obrnuti(pixel.crvena);
+              izlaz.Write(Convert.ToByte(pixel.zelena));
+              izlaz.Write(Convert.ToByte(pixel.plava));
             }
-            izlaz.Write(pixel.zelena);
-            izlaz.Write(pixel.crvena);
+          }
+          for (int i=0;i<6;i++)
+          {
+              pixel.plava = ulaz.ReadByte();
+              pixel.zelena = ulaz.ReadByte();
+              pixel.crvena = ulaz.ReadByte();
+
+              pixel.plava-=pixel.plava%2;
+              pixel.zelena-=pixel.zelena%2;
+              pixel.crvena-=pixel.crvena%2;
+
+              izlaz.Write(Convert.ToByte(pixel.plava));
+              izlaz.Write(Convert.ToByte(pixel.zelena));
+              izlaz.Write(Convert.ToByte(pixel.crvena));
+          }
+          for (int k=0;k<velicina-(tekst.Length*18)-18;k++)
+          {
+            izlaz.Write(ulaz.ReadByte());
           }
         }
-        Console.Write(FileHeader.bfVelicina);
-        Console.Write(velicina);
-        for (int k=0;k<FileHeader.bfVelicina-44-(tekst.Length*18);k++)
+        //citanje poruke
+        if (KojaFunkcija==2)
         {
-          izlaz.Write(ulaz.ReadByte());
+          string ProcitaniTekst = "";
+          int karakter2 = 0;
+          do
+          {
+            karakter2=0;
+            for (int j=0;j<6;j++)
+            {
+              pixel.plava = ulaz.ReadByte();
+              pixel.zelena = ulaz.ReadByte();
+              pixel.crvena = ulaz.ReadByte();
+              karakter2 = karakter2*2+pixel.plava%2;
+              if(j!=5)
+              {
+                karakter2 = karakter2*2+pixel.zelena%2;
+                karakter2 = karakter2*2+pixel.crvena%2;
+              }
+            }
+            Console.WriteLine(Obrnuti(karakter2));
+            ProcitaniTekst+=(char)(Obrnuti(karakter2));
+          }while (karakter2!=0);
+          Console.WriteLine("Desifrovana poruka je: '{0}'.",ProcitaniTekst);
         }
 
-
-
-
-       izlaz.Write(FileHeader.bfTip);
+       
        ulaz.Close();
        izlaz.Close();
     }

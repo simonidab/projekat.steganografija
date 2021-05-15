@@ -58,6 +58,54 @@ class MainClass {
     }
     return slika;
   }
+  //ove dve pokusaj obrnutog lol
+  static int Prazno(int nula)
+  {
+    if(nula == 0) return 1;
+    else return 0;
+  }
+  static string IzSlikeTekst(Bitmap slika)
+  {
+    int brojac = 0, b1 = 0, b2 = 0;
+    string recenica = "";
+    int slovo = 0;
+    while(brojac < 17)
+    {
+      brojac = 0;
+      for (int j=0;j<6;j++)
+      {
+        if(b1 < slika.Height && b2 >= slika.Width)
+        {
+          b1++;
+          b2 = 0;
+        }
+        if(b2 < slika.Width && b1 < slika.Height)
+        {
+          Color pixel = slika.GetPixel(b1, b2);
+          /*R = pixel.R - pixel.R % 2;
+          G = pixel.G - pixel.G % 2;
+          B = pixel.B - pixel.B % 2;*/
+
+          slovo = slovo * 2 + pixel.R % 2;
+          brojac += Prazno(slovo);
+          Console.WriteLine("{0} slovo r, brojac : {1}", slovo, brojac);
+          if (j !=5)
+          {
+            slovo = slovo * 2 + pixel.G % 2;
+            Console.WriteLine("{0} slovo g", slovo);
+            slovo = slovo * 2 + pixel.B % 2;
+            brojac += Prazno(slovo);
+            Console.WriteLine("{0} slovo b", slovo);
+          }
+          brojac += Prazno(slovo);
+          b2++;
+        }
+      }
+      recenica += Convert.ToString((char) Obrnuti(slovo));
+      Console.WriteLine("{0} recenica {1}", recenica, Convert.ToInt32("o"));
+    }
+    return recenica;
+  }
   //file header, 14 bajtova
   struct BMFH
   {
@@ -116,7 +164,55 @@ class MainClass {
   public static void Main (string[] args) {
     string imeUlaza = "SlikaZaProveru.bmp";
     string imeIzlaza = "IzlazZaProveru.bmp";
-    if (File.Exists(imeUlaza))
+    int izbor = 0;
+    Console.WriteLine("Dobar dan i dobrodosli tajnoviti ljudi !!");
+    Console.WriteLine();
+    Console.WriteLine("Medju opcijama imamo da:");
+    //Console.WriteLine();
+    Console.WriteLine();
+    do
+    {
+      Console.WriteLine("Ako zelite da sakrijete poruku u slici napisite 0, ako zelite da procitate poruku iz slike unesite 1, a ako zelite da prekinete program unesite 2");
+      Console.Write("Odgovor: ");
+      izbor = Convert.ToInt32(Console.ReadLine());
+      if(izbor == 0)
+      {
+        Console.WriteLine("__________________________________________________________________");
+        Console.WriteLine();
+        Bitmap slika = new Bitmap(imeUlaza);
+        Console.Write("Unesite text koji zelite da sakrijete u slici: ");
+        string tekst = Console.ReadLine();
+        slika = TekstUSliku(tekst, slika);
+        slika.Save(imeIzlaza);
+        Console.WriteLine();
+        Console.WriteLine("Uspesno sakrivena poruka!");
+      }
+      else if(izbor == 1)
+      {
+        //pitanje kad vidis elemejo ali jel se ukucava ime fajla slike? kao readline da ispravim posle
+        Bitmap slika1 = new Bitmap(imeIzlaza);
+        Console.WriteLine("__________________________________________________________________");
+        Console.WriteLine();
+        Console.WriteLine("Poruka koju ste trazili: {0}", IzSlikeTekst(slika1));
+        Console.WriteLine();
+      }
+      else if(izbor != 2 && izbor != 1 && izbor != 0)
+      {
+         Console.WriteLine("__________________________________________________________________");
+        Console.WriteLine();
+        Console.WriteLine("........");
+        Console.WriteLine("Evo ponovo:");
+        Console.WriteLine();
+      }
+      Console.WriteLine("__________________________________________________________________");
+      Console.WriteLine();
+      if(izbor == 2) 
+      {
+        Console.WriteLine("Dovidjenja!");
+        Console.WriteLine("__________________________________________________________________");
+      }
+    }while(izbor != 2);
+    /*if (File.Exists(imeUlaza))
     {
         FileStream fs = File.Open(imeUlaza, FileMode.Open);
         BinaryReader ulaz  = new BinaryReader(fs);
@@ -256,7 +352,7 @@ class MainClass {
        izlaz.Close();
     }
     else
-        Console.WriteLine( "Slika '{0}' ne postoji", imeUlaza);
+        Console.WriteLine( "Slika '{0}' ne postoji", imeUlaza);*/
 
   }
 }

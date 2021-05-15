@@ -1,7 +1,63 @@
 using System;
 using System.IO;
+using System.Drawing;
 
 class MainClass {
+  //metoda za ubacivanje teksta u sliku
+  public static Bitmap TekstUSliku(string tekst, Bitmap slika)
+  {
+    int b1 = 0, b2 = 0, R = 0, G = 0, B = 0;
+    for (int i=0;i<tekst.Length;i++)
+    {
+      short karakter = (short)(tekst[i]); 
+      for (int j=0;j<6;j++)
+      {
+        if(b1 < slika.Height && b2 >= slika.Width)
+        {
+          b1++;
+          b2 = 0;
+        }
+        if(b2 < slika.Width && b1 < slika.Height)
+        {
+          Color pixel = slika.GetPixel(b1, b2);
+          R = pixel.R - pixel.R % 2;
+          G = pixel.G - pixel.G % 2;
+          B = pixel.B - pixel.B % 2;
+          slika.SetPixel(b1, b2, Color.FromArgb(R, G, B));
+
+          R = pixel.R + karakter%2;
+          karakter /= 2;
+          if (j !=5 )
+          {
+            G = pixel.G + karakter%2;
+            karakter /= 2;
+            B = pixel.B + karakter%2;
+            karakter /= 2;
+          }
+          slika.SetPixel(b1, b2, Color.FromArgb(R, G, B));
+          b2++;
+        }
+      }
+    }
+    for(int i = 0;i < 6;i++)
+    {
+      if(b1 < slika.Height && b2 >= slika.Width)
+      {
+        b1++;
+        b2 = 0;
+      }
+      if(b2 < slika.Width && b1 < slika.Height)
+      {
+        Color pixel = slika.GetPixel(b1, b2);
+        R = pixel.R - pixel.R % 2;
+        G = pixel.G - pixel.G % 2;
+        B = pixel.B - pixel.B % 2;
+        slika.SetPixel(b1, b2, Color.FromArgb(R, G, B));
+        b2++;
+      }
+    }
+    return slika;
+  }
   //file header, 14 bajtova
   struct BMFH
   {
@@ -44,6 +100,19 @@ class MainClass {
         }
         return Convert.ToByte(obrnuti);
   }
+  /*static int IzDekadnogUBinarno(int broj)
+  {
+    int binarno = 0;
+    int i = 0;
+    do
+    {
+      binarno += (broj % 2)*Convert.ToInt32(Math.Pow(10, i));
+      i++;
+      broj /= 2;
+    }while(broj > 0);
+
+    return binarno;
+  }*/
   public static void Main (string[] args) {
     string imeUlaza = "SlikaZaProveru.bmp";
     string imeIzlaza = "IzlazZaProveru.bmp";

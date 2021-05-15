@@ -1,0 +1,3 @@
+#! /bin/bash
+mcs -out:main.exe -r:System.Drawing.dll main.cs
+mono main.exe

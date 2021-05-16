@@ -1,0 +1,32 @@
+ //file header, 14 bajtova
+  struct BMFH
+  {
+    public short bfTip;  //tip slike, u ovom slucaju uvek BM
+    public int bfVelicina;  //velicina fajla u bajtovima
+    public short bfRezervisano1; //uvek 0
+    public short bfRezervisano2; //uvek 0
+    public int bfoffBitovi; //broj bajtova od headera do piksela
+  }
+  //info header
+  struct BMIH
+  {
+    public int biVelicina;  //broj bajtova u headeru
+    public int biSirina;  //sirina u pikselima
+    public int biVisina;  //visina u pikselima
+    public short biRavan; //broj ravni, mora biti 1
+    public short biBitCount; //broj bitova u paleti boja
+    public int biKompresija; //tip kompresije
+    public int biVelicinaSlike;  //velicina slike u bajtovima
+    public int biXPikseliPoMetru;  //broj piksela po metru na x osi
+    public int biYPikseliPoMetru; //broj piksela po metru na y osi
+    public int biBoje;  //broj boja koriscenih
+    public int biBitneBoje;  //broj bitnih boja
+  }
+  //piksel
+  struct Pixel
+  {
+    public int plava;
+    public int zelena;
+    public int crvena;
+  }
+  

@@ -194,7 +194,7 @@ class MainClass {
       else if(izbor == 1)
       {
         //pitanje kad vidis elemejo ali jel se ukucava ime fajla slike? kao readline da ispravim posle
-        //mislim da je dobro ovako lmfao
+        //mislim da je dobro ovako
         Bitmap slika1 = new Bitmap(imeIzlaza);
         Console.WriteLine("__________________________________________________________________");
         Console.WriteLine();

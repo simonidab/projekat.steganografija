@@ -3,7 +3,6 @@ using System.IO;
 using System.Drawing;
 
 class MainClass {
-  //metoda za ubacivanje teksta u sliku
   public static Bitmap TekstUSliku(string tekst, Bitmap slika)
   {
     int b1 = 0, b2 = 0, R = 0, G = 0, B = 0;
@@ -19,11 +18,11 @@ class MainClass {
         }
         if(b2 < slika.Width && b1 < slika.Height)
         {
-          Color pixel = slika.GetPixel(b1, b2);
+          Color pixel = slika.GetPixel(b2, b1);
           R = pixel.R - pixel.R % 2;
           G = pixel.G - pixel.G % 2;
           B = pixel.B - pixel.B % 2;
-          slika.SetPixel(b1, b2, Color.FromArgb(R, G, B));
+          slika.SetPixel(b2, b1, Color.FromArgb(R, G, B));
 
           R = pixel.R + karakter%2;
           karakter /= 2;
@@ -34,40 +33,22 @@ class MainClass {
             B = pixel.B + karakter%2;
             karakter /= 2;
           }
-          slika.SetPixel(b1, b2, Color.FromArgb(R, G, B));
+          slika.SetPixel(b2, b1, Color.FromArgb(R, G, B));
           b2++;
         }
       }
     }
-    for(int i = 0;i < 6;i++)
-    {
-      if(b1 < slika.Height && b2 >= slika.Width)
-      {
-        b1++;
-        b2 = 0;
-      }
-      if(b2 < slika.Width && b1 < slika.Height)
-      {
-        Color pixel = slika.GetPixel(b1, b2);
-        R = pixel.R - pixel.R % 2;
-        G = pixel.G - pixel.G % 2;
-        B = pixel.B - pixel.B % 2;
-        slika.SetPixel(b1, b2, Color.FromArgb(R, G, B));
-        b2++;
-      }
-    }
     return slika;
   }
-  //ove dve pokusaj obrnutog lol
-  static int Prazno(int nula)
+   static int Prazno(int nula)
   {
     if(nula == 0) return 1;
     else return 0;
   }
-  /*static string IzSlikeTekst(Bitmap slika)
+  static string IzSlikeTekst(Bitmap slika)
   {
     int brojac = 0, b1 = 0, b2 = 0;
-    string recenica = "";
+    string recenica = String.Empty;
     int slovo = 0;
     while(brojac < 17)
     {
@@ -81,84 +62,39 @@ class MainClass {
         }
         if(b2 < slika.Width && b1 < slika.Height)
         {
-          Color pixel = slika.GetPixel(b1, b2);
-          R = pixel.R - pixel.R % 2;
-          G = pixel.G - pixel.G % 2;
-          B = pixel.B - pixel.B % 2;
+          Color pixel = slika.GetPixel(b2, b1);
 
           slovo = slovo * 2 + pixel.R % 2;
           brojac += Prazno(slovo);
-          Console.WriteLine("{0} slovo r, brojac : {1}", slovo, brojac);
           if (j !=5)
           {
             slovo = slovo * 2 + pixel.G % 2;
-            Console.WriteLine("{0} slovo g", slovo);
             slovo = slovo * 2 + pixel.B % 2;
             brojac += Prazno(slovo);
-            Console.WriteLine("{0} slovo b", slovo);
           }
           brojac += Prazno(slovo);
           b2++;
         }
       }
-      recenica += Convert.ToString((char) Obrnuti(slovo));
-      Console.WriteLine("{0} recenica {1}", recenica, Convert.ToInt32("o"));
+      recenica += Convert.ToString((char) Obrni(slovo));
+      slovo=0;
     }
     return recenica;
   }
-  */
-  static string IzSlikeTekst1(Bitmap slika)
-  {
-    short slovo = 0;
-    string recenica = String.Empty;
-    int brojac = 0;
-    for (int i = 0; i < slika.Height; i++)
+  static int Obrni(int n)
     {
-      for (int j = 0; j < slika.Width; j++)
-      {
-        brojac = 0;
-        slovo = 0;
-        Color pixel = slika.GetPixel(j, i);
-        for (int n = 0; n < 3; n++)
-        {
-          slovo = (short)(slovo * 2 + pixel.R % 2);
-          brojac++;
-          if (brojac!=16)
-          {
-            slovo = (short)(slovo * 2 + pixel.G % 2);
-            slovo = (short)(slovo * 2 + pixel.B % 2);
-            brojac+=2;
-          }
-        }
-        if (brojac==16)
-        {
-          Console.WriteLine(slovo);
-          slovo = Obrni(slovo);
-          if (slovo == 0)
-          {
-            return recenica;
-          }
-          recenica += ((char)slovo).ToString();
-        }
-      }
-    }
-    return recenica;
-  }
-
-    static short Obrni(short n)
-    {
-        short obrnuti = 0;
+        int obrnuti = 0;
         for (int i = 0; i < 16; i++)
         {
-            obrnuti = (short)(obrnuti * 2 + n % 2);
-            n = (short)(n/2);
+            obrnuti = obrnuti * 2 + n % 2;
+            n/=2;
         }
         return obrnuti;
     }
  
   public static void Main (string[] args) {
-    string imeUlaza = "drvo.bmp";
-    string imeIzlaza = "drvo2.bmp";
+    string imeUlaza = "slika1.bmp";
+    string imeIzlaza = "IzlazZaProveru.bmp";
     int izbor = 0;
     Console.WriteLine("Dobar dan i dobrodosli tajnoviti ljudi !!");
     Console.WriteLine();
@@ -198,7 +134,7 @@ class MainClass {
         Bitmap slika1 = new Bitmap(imeIzlaza);
         Console.WriteLine("__________________________________________________________________");
         Console.WriteLine();
-        Console.WriteLine("Poruka koju ste tražili: {0}", IzSlikeTekst1(slika1));
+        Console.WriteLine("Poruka koju ste tražili: {0}", IzSlikeTekst(slika1));
         Console.WriteLine();
       }
       else if(izbor != 2 && izbor != 1 && izbor != 0)

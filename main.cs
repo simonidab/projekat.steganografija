@@ -24,18 +24,35 @@ class MainClass {
           B = pixel.B - pixel.B % 2;
           slika.SetPixel(b2, b1, Color.FromArgb(R, G, B));
 
-          R = pixel.R + karakter%2;
+          R = R + karakter%2;
           karakter /= 2;
           if (j !=5 )
           {
-            G = pixel.G + karakter%2;
+            G = G + karakter%2;
             karakter /= 2;
-            B = pixel.B + karakter%2;
+            B = B + karakter%2;
             karakter /= 2;
           }
           slika.SetPixel(b2, b1, Color.FromArgb(R, G, B));
           b2++;
         }
+      }
+    }
+    for(int i1 = 0;i1 < 6;i1++)
+    {
+      if(b1 < slika.Height && b2 >= slika.Width)
+      {
+        b1++;
+        b2 = 0;
+      }
+      if(b2 < slika.Width && b1 < slika.Height)
+      {
+        Color pixel = slika.GetPixel(b2, b1);
+        R = pixel.R - pixel.R % 2;
+        G = pixel.G - pixel.G % 2;
+        B = pixel.B - pixel.B % 2;
+        slika.SetPixel(b2, b1, Color.FromArgb(R, G, B));
+        b2++;
       }
     }
     return slika;
@@ -93,8 +110,6 @@ class MainClass {
     }
  
   public static void Main (string[] args) {
-    string imeUlaza = "slika1.bmp";
-    string imeIzlaza = "IzlazZaProveru.bmp";
     int izbor = 0;
     Console.WriteLine("Dobar dan i dobrodosli tajnoviti ljudi !!");
     Console.WriteLine();
@@ -117,23 +132,41 @@ class MainClass {
       }
       if(izbor == 0)
       {
-        Console.WriteLine("__________________________________________________________________");
+        Console.WriteLine ("__________________________________________________________________");
+        Console.WriteLine();
+        Console.WriteLine("Unesite ime slike u koju želite da sakrijete tajnu poruku: ");
+        string imeUlaza = Console.ReadLine();
+        if (!File.Exists(imeUlaza))
+        {
+          Console.WriteLine("Slika sa imenom {0} ne postoji.",imeUlaza);
+          return;
+        }
         Console.WriteLine();
         Bitmap slika = new Bitmap(imeUlaza);
         Console.Write("Unesite tekst koji želite da sakrijete u slici: ");
         string tekst = Console.ReadLine();
         slika = TekstUSliku(tekst, slika);
+        Console.WriteLine();
+        Console.WriteLine("Unesite kako želite da se naziva fajl sa sakrivenim tekstom: ");
+        string imeIzlaza = Console.ReadLine();
         slika.Save(imeIzlaza);
         Console.WriteLine();
         Console.WriteLine("Uspešno sakrivena poruka!");
       }
       else if(izbor == 1)
       {
-        //pitanje kad vidis elemejo ali jel se ukucava ime fajla slike? kao readline da ispravim posle
-        //mislim da je dobro ovako
-        Bitmap slika1 = new Bitmap(imeIzlaza);
+         Console.WriteLine("__________________________________________________________________");
+         Console.WriteLine();
+        Console.WriteLine("Unesite ime slike iz koje želite da pročitate tajnu poruku");
+        string imeIzlaza1 = Console.ReadLine();
+        if (!File.Exists(imeIzlaza1))
+        {
+          Console.WriteLine("Slika sa imenom {0} ne postoji.",imeIzlaza1);
+          return;
+        }
         Console.WriteLine("__________________________________________________________________");
         Console.WriteLine();
+        Bitmap slika1 = new Bitmap(imeIzlaza1);
         Console.WriteLine("Poruka koju ste tražili: {0}", IzSlikeTekst(slika1));
         Console.WriteLine();
       }
